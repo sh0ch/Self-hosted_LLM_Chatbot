@@ -1,0 +1,32 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ollama
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ollama
+  minReplicas: 2 # Redundanz
+  maxReplicas: 10
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0  # Reagiert sofort auf Wachstum
+      policies:
+      - type: Percent
+        value: 100    # Erlaubt schnelles Hochskalieren, wenn nötig (100% Wachstum)
+        periodSeconds: 15 
+    scaleDown:
+      stabilizationWindowSeconds: 60  # Wartet 60 Sekunden, bevor es herunterskaliert
+      policies:
+      - type: Percent
+        value: 50     # Reduziert um bis zu 50% auf einmal
+        periodSeconds: 60  
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80  # Da die CPU entweder bei 0% oder 80% liegt

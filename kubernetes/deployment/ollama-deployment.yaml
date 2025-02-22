@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "8080"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      containers:
+      - name: ollama
+        image: ollama/ollama:latest
+        ports:
+        - containerPort: 11434
+        volumeMounts:
+        - name: ollama-data
+          mountPath: /root/.ollama
+        resources:
+          requests:
+            cpu: "500m"  # Minimum CPU required
+          limits:
+            cpu: "1"     # Maximum CPU allowed
+        # resources:
+        #   limits:
+        #     nvidia.com/gpu: "1"
+      volumes:
+      - name: ollama-data
+        hostPath:
+        persistentVolumeClaim:
+          claimName: ollama-pvc

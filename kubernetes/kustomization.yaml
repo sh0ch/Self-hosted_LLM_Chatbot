@@ -1,0 +1,15 @@
+resources:
+- pv/ollama-pv.yaml
+- pv/webui-pv.yaml
+- pv/grafana-pv.yaml
+- pvc/ollama-pvc.yaml
+- pvc/webui-pvc.yaml
+- pvc/grafana-pvc.yaml
+- deployment/ollama-deployment.yaml
+- deployment/webui-deployment.yaml
+- service/ollama-service.yaml
+- service/webui-service.yaml
+- HPA/hpa.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
